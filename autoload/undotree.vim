@@ -212,6 +212,7 @@ let s:panel = {}
 
 function! s:panel.Init() abort
     let self.bufname = "invalid"
+    echom 'self是______' self
 endfunction
 
 function! s:panel.SetFocus() abort
@@ -230,6 +231,10 @@ function! s:panel.SetFocus() abort
 endfunction
 
 function! s:panel.IsVisible() abort
+    echom 'self.bufname'
+    echom self.bufname
+    echom 'bufwinnr(self.bufname)'
+    echom bufwinnr(self.bufname)
     if bufwinnr(self.bufname) != -1
         return 1
     else
@@ -463,6 +468,8 @@ function! s:undotree.Toggle() abort
     "Global auto commands to keep undotree up to date.
     let auEvents = "BufEnter,InsertLeave,CursorMoved,BufWritePost"
 
+    echom 'self.bufname'
+    echom self.bufname
     call s:log(self.bufname." Toggle()")
     if self.IsVisible()
         call self.Hide()
