@@ -246,10 +246,6 @@ fun! s:panel.SetFocus() abort
 endf
 
 fun! s:panel.IsVisible() abort
-    " echom 'self.bufname'
-    " echom self.bufname
-    " echom 'bufwinnr(self.bufname)'
-    " echom bufwinnr(self.bufname)
     try
         let l:_num =  bufwinnr(self.bufname)
     catch

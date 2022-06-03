@@ -1,7 +1,5 @@
 ### [Project on Vim.org](http://www.vim.org/scripts/script.php?script_id=4177)
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mbbill/undotree?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 ### Screenshot
 
 ![](doc/_static/undotree.png)
