@@ -97,9 +97,12 @@ endif
 
   1. Create a file under $HOME with the name `undotree_debug.log`
      * `$touch ~/undotree_debug.log`
-  2. Run vim, and the log will automatically be appended to the file, and you may watch it using `tail`:
+  2. Run vim,
+      and the log will automatically be appended to the file,
+      and you may watch it using `tail`:
      * `$tail -F ~/undotree_debug.log`
-  3. If you want to disable debug, just delete that file.
+  3. If you want to disable debug,
+      just delete that file.
 
 ### License
 
