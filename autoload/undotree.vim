@@ -1,5 +1,3 @@
-"=================================================
-" File: autoload/undotree.vim
 " Description: Manage your undo history in a graph.
 " Author: David Knoble <ben.knoble@gmail.com>
 " License: BSD
@@ -517,8 +515,9 @@ fun! s:undotree.GetStatusLine() abort
         let seq_curhead = self.seq_curhead
     el
         let seq_curhead = 'None'
+        return '%#Hi_status_2#  at:' . seq_cur . '  分支顶'
     en
-    return 'current: '.seq_cur.' redo: '.seq_curhead
+    return '%#Hi_status_2#  at:' . seq_cur . ' ctrl-r: ' . seq_curhead
 endf
 
 fun! s:undotree.Show() abort
@@ -1216,7 +1215,8 @@ fun! s:diffpanel.GetStatusLine() abort
         let add = self.changes.add
         let del = self.changes.del
     en
-    return string(sum).' '.repeat('+',add).repeat('-',del)
+    return '%#Hi_status_1# ' . 'add:' . add . '  del: ' .  del
+    "\ return string(sum).' '.repeat('+',add).repeat('-',del)
 endf
 
 fun! s:diffpanel.Init() abort

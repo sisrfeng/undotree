@@ -18,12 +18,12 @@ License	README.md	/^### License$/;"	S
 Screenshot	README.md	/^### Screenshot$/;"	S
 Table of Contents	README.md	/^### Table of Contents$/;"	S
 Undotree	autoload/undotree.vim	/^        augroup Undotree$/;"	a
-UndotreeFocus	plugin/undotree.vim	/^command! -n=0 -bar UndotreeFocus    :call undotree#UndotreeFocus()$/;"	c
-UndotreeHide	plugin/undotree.vim	/^command! -n=0 -bar UndotreeHide     :call undotree#UndotreeHide()$/;"	c
-UndotreeShow	plugin/undotree.vim	/^command! -n=0 -bar UndotreeShow     :call undotree#UndotreeShow()$/;"	c
-UndotreeToggle	plugin/undotree.vim	/^    command! -n=0 -bar UndotreeToggle :echoerr "undotree.vim needs Vim version >= 7.3"$/;"	c
-UndotreeToggle	plugin/undotree.vim	/^    command! -n=0 -bar UndotreeToggle :echoerr "undotree.vim needs vim7.3 with patch005 applied./;"	c
-UndotreeToggle	plugin/undotree.vim	/^command! -n=0 -bar UndotreeToggle   :call undotree#UndotreeToggle()$/;"	c
+UndotreeFocus	plugin/undotree.vim	/^com!  -n=0 -bar UndotreeFocus    :call undotree#UndotreeFocus()$/;"	c
+UndotreeHide	plugin/undotree.vim	/^com!  -n=0 -bar UndotreeHide     :call undotree#UndotreeHide()$/;"	c
+UndotreeShow	plugin/undotree.vim	/^com!  -n=0 -bar UndotreeShow     :call undotree#UndotreeShow()$/;"	c
+UndotreeToggle	plugin/undotree.vim	/^    com!  -n=0 -bar UndotreeToggle :echoerr "undotree.vim needs Vim version >= 7.3"$/;"	c
+UndotreeToggle	plugin/undotree.vim	/^    com!  -n=0 -bar UndotreeToggle :echoerr "undotree.vim needs vim7.3 with patch005 applied."$/;"	c
+UndotreeToggle	plugin/undotree.vim	/^com!  -n=0 -bar UndotreeToggle   :call undotree#UndotreeToggle()$/;"	c
 Undotree_Diff	autoload/undotree.vim	/^    augroup Undotree_Diff$/;"	a
 Undotree_Main	autoload/undotree.vim	/^    augroup Undotree_Main$/;"	a
 Usage	README.md	/^### Usage$/;"	S
