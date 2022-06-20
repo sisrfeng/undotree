@@ -78,24 +78,24 @@ if !exists('g:undotree_SetFocusWhenToggle')
 en
 
 " tree node shape.
-if !exists('g:undotree_TreeNodeShape')
-    let g:undotree_TreeNodeShape = '*'
-en
+    if !exists('g:undotree_TreeNodeShape')
+        let g:undotree_TreeNodeShape = '*'
+    en
 
-" tree vertical shape.
-if !exists('g:undotree_TreeVertShape')
-    let g:undotree_TreeVertShape = '|'
-en
+    " tree vertical shape.
+    if !exists('g:undotree_TreeVertShape')
+        let g:undotree_TreeVertShape = '|'
+    en
 
-" tree split shape.
-if !exists('g:undotree_TreeSplitShape')
-    let g:undotree_TreeSplitShape = '/'
-en
+    " tree split shape.
+    if !exists('g:undotree_TreeSplitShape')
+        let g:undotree_TreeSplitShape = '/'
+    en
 
-" tree return shape.
-if !exists('g:undotree_TreeReturnShape')
-    let g:undotree_TreeReturnShape = '\'
-en
+    " tree return shape.
+    if !exists('g:undotree_TreeReturnShape')
+        let g:undotree_TreeReturnShape = '\'
+    en
 
 if !exists('g:undotree_DiffCommand')
     let g:undotree_DiffCommand = "diff"

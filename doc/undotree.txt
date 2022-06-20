@@ -376,7 +376,6 @@ Default: 0
 3.11 g:undotree_HighlightChangedText             *undotree_HighlightChangedText*
 
 Set to 1 to highlight the changed text.
-
 Default: 1
 
 ------------------------------------------------------------------------------
@@ -386,7 +385,7 @@ Default: 1
 Set the highlight linked syntax type.
 You may chose your favorite through ":hi" command.
 
-Default: "DiffAdd" and "DiffChange"
+    Default: "DiffAdd" and "DiffChange"
 
 ------------------------------------------------------------------------------
 3.13 g:Undotree_CustomMap                                   *Undotree_CustomMap*
