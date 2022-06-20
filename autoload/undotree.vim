@@ -244,7 +244,11 @@ fun! s:panel.SetFocus() abort
 endf
 
 fun! s:panel.IsVisible() abort
-    let l:_num =  bufwinnr(self.bufname)
+    try
+        let l:_num =  bufwinnr(self.bufname)
+    catch
+        let l:_num = -1
+    endtry
 
     if  l:_num != -1
         return 1
@@ -1145,11 +1149,7 @@ fun! s:diffpanel.ParseDiff(diffresult, targetBufnr) abort
     " matchadd associates with windows.
     if exists("w:undotree_diffmatches")
         for i in w:undotree_diffmatches
-            try
-                call matchdelete(i)
-            catch
-                echo  'id  '   i . 'not found??????'
-            endtry
+            call matchdelete(i)
         endfor
     en
 
@@ -1310,13 +1310,7 @@ fun! s:diffpanel.CleanUpHighlight() abort
         call s:exec_silent("norm! ".i."\<c-w>\<c-w>")
         if exists("w:undotree_diffmatches")
             for j in w:undotree_diffmatches
-                try
-                    call matchdelete(j)
-                catch
-                    echom 'id not found?????? j'
-                    echom 'id not found?????? j'
-                    echom 'id not found?????? j'
-                endtry
+                call matchdelete(j)
             endfor
             let w:undotree_diffmatches = []
         en
