@@ -1116,7 +1116,9 @@ fun! s:diffpanel.Update(seq,targetBufnr,targetid) abort
     call s:exec('1,$ d _')
 
     call append(0,diffresult)
-    call append(0,'- seq: '.a:seq.' -')
+    call append(0, '   ')
+    call append(0,'节点号: ' . a:seq)
+    "\ call append(0,'- seq: '.a:seq.' -')
 
     "remove the last empty line
     if getline("$") == ""
