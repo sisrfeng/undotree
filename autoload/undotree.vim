@@ -87,21 +87,29 @@
     let s:keymap += [['PreviousState'      , 'J'             , 'Move to the previous undo state']]
     let s:keymap += [['NextSavedState'     , '>'             , 'Move to the next saved state']]
     let s:keymap += [['PreviousSavedState' , '<'             , 'Move to the previous saved state']]
+
     let s:keymap += [['Redo'               , '<c-r>'         , 'Redo']]
     let s:keymap += [['Undo'               , 'u'             , 'Undo']]
     let s:keymap += [['Enter'              , '<2-LeftMouse>' , 'Move to the current state']]
     let s:keymap += [['Enter'              , '<cr>'          , 'Move to the current state']]
 
-" 'Diff' sign definitions. There are two 'delete' signs; a 'normal' one and one
-    " that is used if the very end of the buffer has been deleted (in which case the
-    " deleted text is actually bejond the end of the current buffer version and therefore
+" 'Diff' sign definitions.
+    exe 'sign define UndotreeAdd    text=增  texthl=' .undotree_HighlightSyntaxAdd
+
+
+    " There are two 'delete' signs;
+    " a 'normal' one and one  that is used if the very end of the buffer has been deleted
+    " (in which case the  deleted text is actually bejond the end of the current buffer version and therefore
     " it is not possible to place a sign on the exact line - because it doesn't exist.
     " Instead, a 'special' delete sign is placed on the (existing) last line of the
-    " buffer)
-    exe 'sign define UndotreeAdd text=++ texthl='.undotree_HighlightSyntaxAdd
-    exe 'sign define UndotreeChg text=~~ texthl='.undotree_HighlightSyntaxChange
-    exe 'sign define UndotreeDel text=-- texthl='.undotree_HighlightSyntaxDel
-    exe 'sign define UndotreeDelEnd text=-v texthl='.undotree_HighlightSyntaxDel
+    exe 'sign define UndotreeDel    text=D↑  texthl=' .undotree_HighlightSyntaxDel
+    exe 'sign define UndotreeDelEnd text=尾 texthl=' .undotree_HighlightSyntaxDel
+    "\                          本来是 text=-v
+
+    exe 'sign define UndotreeChg    text=改  texthl=' .undotree_HighlightSyntaxChange
+    "\ 按行diff,
+        "\ ¿D↑¿ 意味着高亮的这一行 的上一行被删, ¿改¿ 意味着高亮的这一行改了
+
 
 " " Id to use for all signs.
     " This is an arbirary number that is hoped to be unique within the instance of vim.
@@ -213,7 +221,7 @@ endf
 
 
 "=================================================
-"Base class for panels.
+" Base class for panels.
 let s:panel = {}
 
 fun! s:panel.Init() abort
@@ -288,24 +296,25 @@ let s:undotree = s:new(s:panel)
 fun! s:undotree.Init() abort
     let self.bufname = "undotree_".s:getUniqueID()
     " Increase to make it unique.
-    let self.width = g:undotree_SplitWidth
-    let self.opendiff = g:undotree_DiffAutoOpen
-    let self.targetid = -1
-    let self.targetBufnr = -1
-    let self.rawtree = {}  "data passed from undotree()
-    let self.tree = {}     "data converted to internal format.
-    let self.seq_last = -1
-    let self.save_last = -1
+    let self.width         = g:undotree_SplitWidth
+    let self.opendiff      = g:undotree_DiffAutoOpen
+    let self.targetid      = -1
+    let self.targetBufnr   = -1
+    let self.rawtree       = {}  " data passed from undotree()
+    let self.tree          = {}  " data converted to internal format.
+    let self.seq_last      = -1
+    let self.save_last     = -1
     let self.save_last_bak = -1
 
     " seqs
-    let self.seq_cur = -1
+    "\ seq整数序号 没有补0占位
+    let self.seq_cur     = -1
     let self.seq_curhead = -1
     let self.seq_newhead = -1
-    let self.seq_saved = {} "{saved value -> seq} pair
+    let self.seq_saved   = {} "{saved value -> seq} pair
 
-    "backup, for mark
-    let self.seq_cur_bak = -1
+    " backup, for mark
+    let self.seq_cur_bak     = -1
     let self.seq_curhead_bak = -1
     let self.seq_newhead_bak = -1
 
@@ -359,15 +368,15 @@ endf
 
 " Helper function, do action in target window, and then update itself.
 fun! s:undotree.ActionInTarget(cmd) abort
-    if !self.SetTargetFocus()
-        return
-    en
+    if !self.SetTargetFocus()  | return  | en
+
     " Target should be a normal buffer.
     if (&bt == '' || &bt == 'acwrite') && (&modifiable == 1) && (mode() == 'n')
         call s:exec(a:cmd)
         call self.Update()
     en
-    " Update not always set current focus.
+
+    " Update not always set current focus, so:
     call self.SetFocus()
 endf
 
@@ -394,7 +403,7 @@ fun! s:undotree.ActionEnter() abort
         call self.ActionInTarget('norm 9999u')
         return
     en
-    call self.ActionInTarget('u '.self.asciimeta[index].seq)
+    call self.ActionInTarget('u ' . self.asciimeta[index].seq)
 endf
 
 fun! s:undotree.ActionUndo() abort
@@ -415,6 +424,7 @@ endf
 
 fun! s:undotree.ActionPreviousSavedState() abort
     call self.ActionInTarget('earlier 1f')
+                    "\ :help earlier
 endf
 
 fun! s:undotree.ActionNextSavedState() abort
@@ -511,13 +521,14 @@ fun! s:undotree.GetStatusLine() abort
     el
         let seq_cur = 'None'
     en
+
     if self.seq_curhead != -1
         let seq_curhead = self.seq_curhead
+        return '%#Hi_status_2#  at:' . seq_cur . ' ctrl-r: ' . seq_curhead
     el
         let seq_curhead = 'None'
-        return '%#Hi_status_2#  at:' . seq_cur . '  分支顶'
+        return '%#Hi_status_2#  at:' . seq_cur . ' ctrl-r: None'
     en
-    return '%#Hi_status_2#  at:' . seq_cur . ' ctrl-r: ' . seq_curhead
 endf
 
 fun! s:undotree.Show() abort
@@ -758,29 +769,38 @@ fun! s:undotree.MarkSeqs() abort
     let max_saved_num = max(keys(self.seq_saved))
     if max_saved_num > 0
         let lineNr = self.Index2Screen(self.seq2index[self.seq_saved[max_saved_num]])
-        call setline(lineNr,substitute(getline(lineNr),'s','S',''))
+        call setline(
+              \ lineNr,
+              \ substitute(
+                         \ getline(lineNr),
+                         \ 's',
+                         \ 'S',
+                         \ '',
+                        \ ),
+             \ )
     en
-    " mark new seqs.
-    if self.seq_cur != -1
-        let index = self.seq2index[self.seq_cur]
-        let lineNr = self.Index2Screen(index)
-        call setline(lineNr,substitute(getline(lineNr),
-                    \'\zs \(\d\+\) \ze [sS ] ','>\1<',''))
-        " move cursor to that line.
-        call s:exec("normal! " . lineNr . "G")
-    en
-    if self.seq_curhead != -1
-        let index = self.seq2index[self.seq_curhead]
-        let lineNr = self.Index2Screen(index)
-        call setline(lineNr,substitute(getline(lineNr),
-                    \'\zs \(\d\+\) \ze [sS ] ','{\1}',''))
-    en
-    if self.seq_newhead != -1
-        let index = self.seq2index[self.seq_newhead]
-        let lineNr = self.Index2Screen(index)
-        call setline(lineNr,substitute(getline(lineNr),
-                    \'\zs \(\d\+\) \ze [sS ] ','[\1]',''))
-    en
+    " mark current/next/head
+       "    > <     {}   []
+        if self.seq_cur != -1
+            let index = self.seq2index[self.seq_cur]
+            let lineNr = self.Index2Screen(index)
+            call setline(lineNr,substitute(getline(lineNr),
+                        \'\zs \(\d\+\) \ze [sS ] ','>\1<',''))
+            " move cursor to that line.
+            call s:exec("normal! " . lineNr . "G")
+        en
+        if self.seq_curhead != -1
+            let index = self.seq2index[self.seq_curhead]
+            let lineNr = self.Index2Screen(index)
+            call setline(lineNr,substitute(getline(lineNr),
+                        \'\zs \(\d\+\) \ze [sS ] ','{\1}',''))
+        en
+        if self.seq_newhead != -1
+            let index = self.seq2index[self.seq_newhead]
+            let lineNr = self.Index2Screen(index)
+            call setline(lineNr,substitute(getline(lineNr),
+                        \'\zs \(\d\+\) \ze [sS ] ','[\1]',''))
+        en
     setl     nomodifiable
 endf
 
@@ -908,7 +928,7 @@ fun! s:undotree.Render() abort
     let TYPE_P = type([])
     let TYPE_X = type('x')
     while slots != []
-        "find next node
+        "\ find next node
         let foundx = 0 " 1 if x element is found.
         let index = 0 " Next element to be print.
 
@@ -969,16 +989,22 @@ fun! s:undotree.Render() abort
         en
         if type(node) == TYPE_E
             let newmeta = node
-            let seq2index[node.seq]=len(out)
+            let seq2index[node.seq] = len(out)
             for i in range(len(slots))
                 if index == i
-                    let newline = newline.g:undotree_TreeNodeShape.' '
+                    let newline = newline . g:undotree_TreeNodeShape . ' '
                 el
-                    let newline = newline.g:undotree_TreeVertShape.' '
+                    let newline = newline . g:undotree_TreeVertShape . ' '
                 en
             endfor
-            let newline = newline.'   '.(node.seq).'    '.
-                        \'('.s:gettime(node.time).')'
+
+            let newline = newline . '   ' . printf("%3S", node.seq )  . '    '.  '| ' . s:gettime(node.time)
+                                              "\ string right-aligned in N display cells
+                                              "\ 3位  补空格(pad with space)
+            "\ let newline = newline . '   ' . (node.seq) . '    '.  '(' . s:gettime(node.time) . ')'
+                                         "\ 这个括号 相当于 1 + (3 + 4)里的括号?
+                                         " 避免混淆 dict的取值 与 string的concat
+
             " update the printed slot to its child.
             if empty(node.p)
                 let slots[index] = 'x'
@@ -1166,11 +1192,13 @@ fun! s:diffpanel.ParseDiff(diffresult, targetBufnr) abort
             let matchwhat = matchstr(line,'^[0-9,\,]*\zs[acd]\ze\d*')
             if matchwhat ==# 'd'
                 if g:undotree_HighlightChangedWithSign
-                    " Normally, for a 'delete' change, the line number we have is always 1 less than the line we
-                    " need to place the sign at, hence '+ 1'
-                    " However, if the very end of the buffer has been deleted then this is not possible (because
-                    " that bit of the buffer no longer exists), so we place a 'special' version of the 'delete'
-                    " sign on what is the last available line)
+                    " Normally, for a 'delete' change,
+                    " the line number we have is always 1 less than the line we  need to place the sign at,
+                        " hence '+ 1'
+                    " However, if the very end of the buffer has been deleted
+                    " then this is not possible
+                    " (because  that bit of the buffer no longer exists),
+                    " so we place a 'special' version of the 'delete'  sign on what is the last available line)
                     exe 'sign place '.s:signId.' line='.((lineNr < l:lastLine) ? lineNr + 1 : l:lastLine).' name='.((lineNr < l:lastLine) ? 'UndotreeDel' : 'UndotreeDelEnd').' buffer='.a:targetBufnr
                     let w:undotree_diffsigns += 1
                 en
@@ -1199,7 +1227,9 @@ fun! s:diffpanel.ParseDiff(diffresult, targetBufnr) abort
         en
 
         if g:undotree_HighlightChangedWithSign
-            exe 'sign place '.s:signId.' line='.lineNr.' name='.(matchwhat ==# 'a' ? 'UndotreeAdd' : 'UndotreeChg').' buffer='.a:targetBufnr
+            exe 'sign place ' . s:signId . ' line=' . lineNr . ' name=' . (matchwhat ==# 'a'
+                                                                            \ ? 'UndotreeAdd'
+                                                                            \ : 'UndotreeChg') . ' buffer=' . a:targetBufnr
             let w:undotree_diffsigns += 1
         en
 
@@ -1450,4 +1480,3 @@ fun! undotree#UndotreeFocus() abort
     en
 endf
 
-" vim: set et fdm=marker sts=4 sw=4:

@@ -76,30 +76,40 @@ CONTENTS                                                     *undotree-contents*
     Although undotree makes switching between history states easier,
         it doesn't do more than that.
 
-    Sometimes it would be much safer or more convenient to keep the undo history across edit sessions.
-    In this case you might need to enable a Vim feature called persistent undo.
+    Sometimes it would be much safer or more convenient to
+    keep the undo history across edit sessions.
+    In this case
+    you might need to enable a Vim feature called persistent undo.
 
-    instead of keeping undo history in RAM,
-    persistent undo keeps undo history in file.
-    Let's say you make a change A,
-    then B,
-    then go back to A and make change C,
-    then you save the file.
+    Instead of keeping undo history in RAM,
+        persistent undo
+        keeps undo history in file.
 
-    Now Vim save the file with content state C,
-    and in the mean time it saves the entire undo history to a file including state A,  B and C.
-    Next time when you open the file,
-    Vim will also restore undo history.
-    So you can still go back to B.
-    The history file is incremental,
-    and every change will be recorded permanently,
-    ´kind of like Git´.
-    You might think that's too much,
-    ´undotree does provide a way to clean them up´.
-    If you need to enable persistent undo,
-    type :h persistent-undo or follow the instructions  below.
+            Let's say
+            you make a change A,
+            then B,
+            then go back to A and make change C,
+            then you save the file.
 
-    Undotree is written in pure Vim script and doesn't rely on any third party tools.
+            Now Vim save the file with content state C,
+            and in the mean time
+            it saves the entire undo history to a file
+                including state A,  B and C.
+            Next time when you open the file,
+                Vim will also restore undo history.
+                So you can still go back to B.
+            The history file is incremental,
+                and every change will be recorded permanently,
+                ´kind of like Git´.
+                You might think that's too much,
+                    ´undotree does provide a way to clean them up´.
+
+            If you need to enable persistent undo,
+                type :h persistent-undo or
+                follow the instructions  below.
+
+    Undotree is written in pure Vim script and
+    doesn't rely on any third party tools.
     It's lightweight,
     simple and fast.
 
@@ -131,13 +141,13 @@ Markers
   * Press ? in undotree window for quick help.
 
 Persistent undo
+    Usually I would like to store the undo files
+    in a seperate place like below.
 
-Usually I would like to store the undo files in a seperate place like below.
-
-    if has("persistent_undo")
-        set undodir=$HOME."/.undodir"
-        set undofile
-    endif
+        if has("persistent_undo")
+            set undodir=$HOME."/.undodir"
+            set undofile
+        endif
 
 ==============================================================================
 3. Configuration                                               *undotree-config*
@@ -440,4 +450,4 @@ Default: 1
 
 
 DIY_again
-DIY_2  vim:filetype=help:syntax=help:
+DIY_2  vim:ft=help:
