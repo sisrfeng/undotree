@@ -351,9 +351,9 @@ g:undotree_TreeSplitShape  | / (slash)     | ╱ (U+2571)
 ------------------------------------------------------------------------------
 3.8 g:undotree_DiffCommand                                *undotree_DiffCommand*
 
-Set the command used to get the diff output.
+    Set the command used to get the diff output.
 
-Default: "diff"
+    Default: "diff"
 
 ------------------------------------------------------------------------------
 3.9 g:undotree_RelativeTimestamp                    *undotree_RelativeTimestamp*

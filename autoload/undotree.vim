@@ -21,17 +21,17 @@
 
 " time indicators
     if g:undotree_ShortIndicators == 1
-        let s:timeSecond   = '1 s'
-        let s:timeSeconds  = ' s'
+        let s:timeSecond   = '1秒'
+        let s:timeSeconds  = '秒'
 
-        let s:timeMinute   = '1 m'
-        let s:timeMinutes  = ' m'
+        let s:timeMinute   = '1分'
+        let s:timeMinutes  = '分'
 
-        let s:timeHour     = '1 h'
-        let s:timeHours    = ' h'
+        let s:timeHour     = '1时'
+        let s:timeHours    = '时'
 
-        let s:timeDay      = '1 d'
-        let s:timeDays     = ' d'
+        let s:timeDay      = '1天'
+        let s:timeDays     = '天'
 
         let s:timeOriginal = 'Orig'
     el
@@ -85,8 +85,8 @@
     let s:keymap += [['DiffToggle'         , 'D'             , 'Toggle the diff panel']]
     let s:keymap += [['NextState'          , 'K'             , 'Move to the next undo state']]
     let s:keymap += [['PreviousState'      , 'J'             , 'Move to the previous undo state']]
-    let s:keymap += [['NextSavedState'     , '>'             , 'Move to the next saved state']]
-    let s:keymap += [['PreviousSavedState' , '<'             , 'Move to the previous saved state']]
+    let s:keymap += [['NextSavedState'     , '<Up>'             , 'Move to the next saved state']]
+    let s:keymap += [['PreviousSavedState' , '<Down>'           , 'Move to the previous saved state']]
 
     let s:keymap += [['Redo'               , '<c-r>'         , 'Redo']]
     let s:keymap += [['Undo'               , 'u'             , 'Undo']]
@@ -516,11 +516,9 @@ fun! s:undotree.Toggle() abort
 endf
 
 fun! s:undotree.GetStatusLine() abort
-    if self.seq_cur != -1
-        let seq_cur = self.seq_cur
-    el
-        let seq_cur = 'None'
-    en
+    let seq_cur =  self.seq_cur != -1
+                   \ ? self.seq_cur
+                   \ :  'None'
 
     if self.seq_curhead != -1
         let seq_curhead = self.seq_curhead
@@ -741,6 +739,7 @@ fun! s:undotree.MarkSeqs() abort
                 \self.seq_cur_bak.' '.
                 \self.seq_curhead_bak.' '.
                 \self.seq_newhead_bak)
+
     call s:log("(cur,curhead,newhead): ".
                 \self.seq_cur.' '.
                 \self.seq_curhead.' '.
@@ -763,43 +762,77 @@ fun! s:undotree.MarkSeqs() abort
     for i in keys(self.seq_saved)
         let index = self.seq2index[self.seq_saved[i]]
         let lineNr = self.Index2Screen(index)
-        call setline(lineNr,substitute(self.asciitree[index],
-                    \' \d\+  \zs \ze','s',''))
-    endfor
-    let max_saved_num = max(keys(self.seq_saved))
-    if max_saved_num > 0
-        let lineNr = self.Index2Screen(self.seq2index[self.seq_saved[max_saved_num]])
         call setline(
               \ lineNr,
               \ substitute(
-                         \ getline(lineNr),
-                         \ 's',
-                         \ 'S',
+                         \ self.asciitree[index],
+                         \ '·',
+                         \ '□',
                          \ '',
                         \ ),
              \ )
-    en
+                            "\ □代替了¿s¿
+    endfor
+
+    "\ The last saved state 不显示s, 而显示为S
+    "\ 我用□代替了
+        "\ let max_saved_num = max(keys(self.seq_saved))
+        "\ if max_saved_num > 0
+        "\     let lineNr = self.Index2Screen( self.seq2index[ self.seq_saved[ max_saved_num ] ] )
+        "\     call setline(
+        "\           \ lineNr,
+        "\           \ substitute(
+        "\                      \ getline(lineNr),
+        "\                      \ 's',
+        "\                      \ 'S',
+        "\                      \ '',
+        "\                     \ ),
+        "\          \ )
+        "\ en
+
     " mark current/next/head
-       "    > <     {}   []
+       "    ¿> <¿     ¿{}¿   ¿[]¿
+        let line_num_pattern = '\v\zs (\d+) \ze [sS ] '
         if self.seq_cur != -1
             let index = self.seq2index[self.seq_cur]
             let lineNr = self.Index2Screen(index)
-            call setline(lineNr,substitute(getline(lineNr),
-                        \'\zs \(\d\+\) \ze [sS ] ','>\1<',''))
+            call setline(
+                  \ lineNr,
+                  \ substitute(
+                             \ getline(lineNr),
+                             \ line_num_pattern,
+                             \ '>\1<',
+                             \ '',
+                            \ ),
+                 \ )
             " move cursor to that line.
             call s:exec("normal! " . lineNr . "G")
         en
         if self.seq_curhead != -1
             let index = self.seq2index[self.seq_curhead]
             let lineNr = self.Index2Screen(index)
-            call setline(lineNr,substitute(getline(lineNr),
-                        \'\zs \(\d\+\) \ze [sS ] ','{\1}',''))
+            call setline(
+                  \ lineNr,
+                  \ substitute(
+                             \ getline(lineNr),
+                             \ line_num_pattern,
+                             \ '{\1}',
+                             \ '',
+                            \ ),
+                 \ )
         en
         if self.seq_newhead != -1
             let index = self.seq2index[self.seq_newhead]
             let lineNr = self.Index2Screen(index)
-            call setline(lineNr,substitute(getline(lineNr),
-                        \'\zs \(\d\+\) \ze [sS ] ','[\1]',''))
+            call setline(
+                  \ lineNr,
+                  \ substitute(
+                             \ getline(lineNr),
+                             \ line_num_pattern,
+                             \ '[\1]',
+                             \ '',
+                            \ ),
+                 \ )
         en
     setl     nomodifiable
 endf
@@ -998,7 +1031,8 @@ fun! s:undotree.Render() abort
                 en
             endfor
 
-            let newline = newline . '   ' . printf("%3S", node.seq )  . '    '.  '| ' . s:gettime(node.time)
+            let newline = newline . '   ' . printf("%3S", node.seq )  . '      ' . s:gettime(node.time)
+            "\                                                         '    | '
                                               "\ string right-aligned in N display cells
                                               "\ 3位  补空格(pad with space)
             "\ let newline = newline . '   ' . (node.seq) . '    '.  '(' . s:gettime(node.time) . ')'
